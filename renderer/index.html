@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;">
+  <title>System Resource Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- 커스텀 타이틀바 -->
+  <div class="titlebar">
+    <div class="titlebar-drag">
+      <div class="app-logo">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="app-title">System Resource Monitor</span>
+    </div>
+    <div class="window-controls">
+      <button class="window-btn minimize" id="btn-minimize">
+        <svg viewBox="0 0 12 12"><rect y="5" width="12" height="2" fill="currentColor"/></svg>
+      </button>
+      <button class="window-btn maximize" id="btn-maximize">
+        <svg viewBox="0 0 12 12"><rect x="1" y="1" width="10" height="10" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+      </button>
+      <button class="window-btn close" id="btn-close">
+        <svg viewBox="0 0 12 12"><path d="M1 1L11 11M1 11L11 1" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- 메인 컨테이너 -->
+  <div class="main-container">
+    <!-- 사이드바 -->
+    <aside class="sidebar">
+      <nav class="nav-menu">
+        <button class="nav-item active" data-section="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>대시보드</span>
+        </button>
+        <button class="nav-item" data-section="cpu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/>
+            <line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>
+            <line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/>
+            <line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/>
+            <line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>
+          </svg>
+          <span>CPU</span>
+        </button>
+        <button class="nav-item" data-section="memory">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="6" width="20" height="12" rx="2"/>
+            <line x1="6" y1="10" x2="6" y2="14"/><line x1="10" y1="10" x2="10" y2="14"/>
+            <line x1="14" y1="10" x2="14" y2="14"/><line x1="18" y1="10" x2="18" y2="14"/>
+          </svg>
+          <span>메모리</span>
+        </button>
+        <button class="nav-item" data-section="gpu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <circle cx="12" cy="12" r="4"/>
+          </svg>
+          <span>GPU</span>
+        </button>
+        <button class="nav-item" data-section="network">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+            <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+            <circle cx="12" cy="20" r="1"/>
+          </svg>
+          <span>네트워크</span>
+        </button>
+        <button class="nav-item" data-section="disk">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <ellipse cx="12" cy="5" rx="9" ry="3"/>
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+          </svg>
+          <span>디스크</span>
+        </button>
+        <button class="nav-item" data-section="processes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+            <circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>
+          </svg>
+          <span>프로세스</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-info-mini">
+          <div class="info-row">
+            <span class="label">운영체제</span>
+            <span class="value" id="os-info">-</span>
+          </div>
+          <div class="info-row">
+            <span class="label">호스트명</span>
+            <span class="value" id="hostname">-</span>
+          </div>
+          <div class="info-row">
+            <span class="label">업타임</span>
+            <span class="value" id="uptime">-</span>
+          </div>
+        </div>
+        
+        <button class="pdf-export-btn" id="btn-pdf-export">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="12" y1="18" x2="12" y2="12"/>
+            <line x1="9" y1="15" x2="15" y2="15"/>
+          </svg>
+          <span>PDF 보고서 생성</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="content">
+      <!-- 대시보드 섹션 -->
+      <section class="section active" id="section-dashboard">
+        <div class="section-header">
+          <h1>시스템 대시보드</h1>
+          <div class="current-time" id="current-time">-</div>
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- CPU 카드 -->
+          <div class="card cpu-card">
+            <div class="card-header">
+              <h3>CPU</h3>
+              <div class="badge cpu-badge" id="cpu-badge">0%</div>
+            </div>
+            <div class="card-body">
+              <div class="cpu-info">
+                <div class="cpu-model" id="cpu-model">-</div>
+                <div class="cpu-specs">
+                  <span id="cpu-cores">- 코어</span>
+                  <span id="cpu-speed">- GHz</span>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="cpu-chart"></canvas>
+              </div>
+              <div class="metric-row">
+                <div class="metric">
+                  <span class="metric-label">온도</span>
+                  <span class="metric-value" id="cpu-temp">-</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">최대 속도</span>
+                  <span class="metric-value" id="cpu-max-speed">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 메모리 카드 -->
+          <div class="card memory-card">
+            <div class="card-header">
+              <h3>메모리</h3>
+              <div class="badge memory-badge" id="memory-badge">0%</div>
+            </div>
+            <div class="card-body">
+              <div class="memory-visual">
+                <div class="memory-bar-container">
+                  <div class="memory-bar" id="memory-bar" style="width: 0%"></div>
+                </div>
+                <div class="memory-labels">
+                  <span id="memory-used">0 GB</span>
+                  <span id="memory-total">/ 0 GB</span>
+                </div>
+              </div>
+              <div class="chart-container small">
+                <canvas id="memory-chart"></canvas>
+              </div>
+              <div class="metric-row">
+                <div class="metric">
+                  <span class="metric-label">사용 가능</span>
+                  <span class="metric-value" id="memory-available">-</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">캐시됨</span>
+                  <span class="metric-value" id="memory-cached">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GPU 카드 -->
+          <div class="card gpu-card">
+            <div class="card-header">
+              <h3>GPU</h3>
+              <div class="badge gpu-badge" id="gpu-badge">-</div>
+            </div>
+            <div class="card-body">
+              <div class="gpu-info">
+                <div class="gpu-model" id="gpu-model">-</div>
+                <div class="gpu-specs">
+                  <span id="gpu-vram">VRAM: -</span>
+                </div>
+              </div>
+              <div class="chart-container small">
+                <canvas id="gpu-chart"></canvas>
+              </div>
+              <div class="metric-row">
+                <div class="metric">
+                  <span class="metric-label">온도</span>
+                  <span class="metric-value gpu-temp" id="gpu-temp">-</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">VRAM 사용</span>
+                  <span class="metric-value" id="gpu-memory-used">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 네트워크 카드 -->
+          <div class="card network-card">
+            <div class="card-header">
+              <h3>네트워크</h3>
+              <div class="badge network-badge" id="network-interface">-</div>
+            </div>
+            <div class="card-body">
+              <div class="network-stats">
+                <div class="network-stat download">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  <div>
+                    <span class="stat-label">다운로드</span>
+                    <span class="stat-value" id="network-download">0 KB/s</span>
+                  </div>
+                </div>
+                <div class="network-stat upload">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="17 14 12 9 7 14"/>
+                    <line x1="12" y1="9" x2="12" y2="21"/>
+                  </svg>
+                  <div>
+                    <span class="stat-label">업로드</span>
+                    <span class="stat-value" id="network-upload">0 KB/s</span>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="network-chart"></canvas>
+              </div>
+              <div class="metric-row">
+                <div class="metric">
+                  <span class="metric-label">총 수신</span>
+                  <span class="metric-value" id="network-total-rx">-</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">총 송신</span>
+                  <span class="metric-value" id="network-total-tx">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 디스크 카드 -->
+          <div class="card disk-card wide">
+            <div class="card-header">
+              <h3>디스크</h3>
+            </div>
+            <div class="card-body">
+              <div class="disk-list" id="disk-list">
+                <!-- 동적으로 채워짐 -->
+              </div>
+            </div>
+          </div>
+
+          <!-- 프로세스 카드 -->
+          <div class="card processes-card wide">
+            <div class="card-header">
+              <h3>상위 프로세스</h3>
+              <span class="sub-header">CPU 사용률 기준</span>
+            </div>
+            <div class="card-body">
+              <table class="process-table">
+                <thead>
+                  <tr>
+                    <th>프로세스</th>
+                    <th>PID</th>
+                    <th>CPU %</th>
+                    <th>메모리 %</th>
+                    <th>메모리</th>
+                  </tr>
+                </thead>
+                <tbody id="process-list">
+                  <!-- 동적으로 채워짐 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CPU 상세 섹션 -->
+      <section class="section" id="section-cpu">
+        <div class="section-header">
+          <h1>CPU 상세 정보</h1>
+        </div>
+        <div class="detail-grid">
+          <div class="card full-width">
+            <div class="card-header">
+              <h3>CPU 사용률 히스토리</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container large">
+                <canvas id="cpu-history-chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3>코어별 사용률</h3>
+            </div>
+            <div class="card-body">
+              <div class="cores-grid" id="cpu-cores-grid">
+                <!-- 동적으로 채워짐 -->
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3>CPU 정보</h3>
+            </div>
+            <div class="card-body">
+              <div class="info-list" id="cpu-detail-info">
+                <!-- 동적으로 채워짐 -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 메모리 상세 섹션 -->
+      <section class="section" id="section-memory">
+        <div class="section-header">
+          <h1>메모리 상세 정보</h1>
+        </div>
+        <div class="detail-grid">
+          <div class="card full-width">
+            <div class="card-header">
+              <h3>메모리 사용률 히스토리</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container large">
+                <canvas id="memory-history-chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3>메모리 분포</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="memory-distribution-chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3>메모리 정보</h3>
+            </div>
+            <div class="card-body">
+              <div class="info-list" id="memory-detail-info">
+                <!-- 동적으로 채워짐 -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GPU 상세 섹션 -->
+      <section class="section" id="section-gpu">
+        <div class="section-header">
+          <h1>GPU 상세 정보</h1>
+        </div>
+        <div class="detail-grid">
+          <div class="card full-width">
+            <div class="card-header">
+              <h3>GPU 사용률 히스토리</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container large">
+                <canvas id="gpu-history-chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3>GPU 온도 히스토리</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="gpu-temp-chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3>GPU 정보</h3>
+            </div>
+            <div class="card-body">
+              <div class="info-list" id="gpu-detail-info">
+                <!-- 동적으로 채워짐 -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 네트워크 상세 섹션 -->
+      <section class="section" id="section-network">
+        <div class="section-header">
+          <h1>네트워크 상세 정보</h1>
+        </div>
+        <div class="detail-grid">
+          <div class="card full-width">
+            <div class="card-header">
+              <h3>네트워크 트래픽 히스토리</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container large">
+                <canvas id="network-history-chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3>네트워크 정보</h3>
+            </div>
+            <div class="card-body">
+              <div class="info-list" id="network-detail-info">
+                <!-- 동적으로 채워짐 -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 디스크 상세 섹션 -->
+      <section class="section" id="section-disk">
+        <div class="section-header">
+          <h1>디스크 상세 정보</h1>
+        </div>
+        <div class="detail-grid">
+          <div class="card full-width">
+            <div class="card-header">
+              <h3>파티션 사용량</h3>
+            </div>
+            <div class="card-body">
+              <div class="disk-detail-list" id="disk-detail-list">
+                <!-- 동적으로 채워짐 -->
+              </div>
+            </div>
+          </div>
+          <div class="card full-width">
+            <div class="card-header">
+              <h3>물리 디스크 정보</h3>
+            </div>
+            <div class="card-body">
+              <div class="info-list" id="disk-layout-info">
+                <!-- 동적으로 채워짐 -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 프로세스 상세 섹션 -->
+      <section class="section" id="section-processes">
+        <div class="section-header">
+          <h1>프로세스 목록</h1>
+        </div>
+        <div class="detail-grid">
+          <div class="card full-width">
+            <div class="card-header">
+              <h3>실행 중인 프로세스 (상위 10개)</h3>
+            </div>
+            <div class="card-body">
+              <table class="process-table full">
+                <thead>
+                  <tr>
+                    <th>프로세스 이름</th>
+                    <th>PID</th>
+                    <th>CPU 사용률</th>
+                    <th>메모리 사용률</th>
+                    <th>메모리 사용량</th>
+                  </tr>
+                </thead>
+                <tbody id="process-detail-list">
+                  <!-- 동적으로 채워짐 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- PDF 생성 모달 -->
+  <div class="modal" id="pdf-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>PDF 보고서 생성</h2>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="pdf-progress">
+          <div class="progress-circle" id="progress-circle">
+            <svg viewBox="0 0 100 100">
+              <circle class="progress-bg" cx="50" cy="50" r="45"/>
+              <circle class="progress-bar" cx="50" cy="50" r="45" id="progress-bar"/>
+            </svg>
+            <div class="progress-text">
+              <span id="progress-time">5:00</span>
+              <span class="progress-label">남은 시간</span>
+            </div>
+          </div>
+          <p class="progress-status" id="progress-status">데이터 수집 중...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

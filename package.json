@@ -1,0 +1,25 @@
+{
+  "name": "system-resource-monitor",
+  "version": "1.0.0",
+  "description": "실시간 시스템 리소스 모니터링 웹 애플리케이션",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "system",
+    "monitor",
+    "cpu",
+    "gpu",
+    "memory"
+  ],
+  "author": "Solideo",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "systeminformation": "^5.21.22",
+    "open": "^10.1.0"
+  }
+}
